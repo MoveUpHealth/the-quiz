@@ -42,6 +42,7 @@ var quizTime = 300;
 var begin = 0
 var score = 0
 var questionCount = 0
+var wrong = 0
 
 
 
@@ -56,15 +57,20 @@ function startQuiz() {
 
 function setTime() {
     var timerInterval = setInterval(function(){
-        timeElapsed = begin ++
+        begin ++
+    if(wrong > 0){
+    var timeElapsed = begin + wrong*5
+    var timeLeft =  quizTime - timeElapsed;
+
+    } else if (wrong === 0){
+    var timeElapsed = begin
     var timeLeft = quizTime - timeElapsed;
+    }
+    
     var minutesLeft = Math.floor(timeLeft / 60)
     var secondsLeft = timeLeft % 60
     timeEl.innerHTML = minutesLeft + ":" + secondsLeft + " Time remaining" 
-    
-    // localStorage.setItem("timeElapsed", timeElapsed)
-    // localStorage.setItem("timerCount", timeLeft)
-    
+        
 
     if (secondsLeft < 10){
         timeEl.textContent = minutesLeft + ":0" + secondsLeft + " time remaining." 
@@ -129,38 +135,12 @@ function radioValue(){
         score ++;
     }
         else {
-           var currentTime = quizTime - begin
-           currentTime -5
-           console.log(currentTime)
-           console.log(currentTime - 5)
-        }
-    //   else {
-    //     var penalty = localStorage.getItem("timerCount");
-    //     var counter = localStorage.getItem("timeElapsed")
-    //     var quizTime = penalty - 5
-    //     var timerInterval = setInterval(function(){
-    //     var newTimeElapsed = counter++    
-    //     var timeLeft = quizTime - newTimeElapsed;
-    //     var minutesLeft = Math.floor(timeLeft / 60)
-    //     var secondsLeft = timeLeft % 60
-    //     timeEl.textContent = minutesLeft + ":" + secondsLeft + " Time remaining" 
-    //     localStorage.setItem("timerCount", timeLeft)
-    //     localStorage.setItem("elapsedTime", newTimeElapsed)
-
-    //     if (secondsLeft < 10){
-    //         timeEl.textContent = minutesLeft + ":0" + secondsLeft + " time remaining." 
-    //     }
-    
-    //     if(timeLeft === 0) {
-    //         clearInterval(timerInterval);}
-
+            wrong ++
         
-    // }, 1000)}
-    console.log(radioSelected)
-    console.log(options[questionCount-1].answer)
-    console.log(score)
+        }
+   
 }
-console.log(score)
+
 
 
 
