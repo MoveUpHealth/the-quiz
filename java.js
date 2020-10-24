@@ -45,6 +45,7 @@ var questionCount = 0
 
 
 
+
 function startQuiz() {
     $('.startDiv').empty()
     $('.container').attr('style', "display: block;")
@@ -55,11 +56,14 @@ function startQuiz() {
 
 function setTime() {
     var timerInterval = setInterval(function(){
-        var timeElapsed = begin ++
+        timeElapsed = begin ++
     var timeLeft = quizTime - timeElapsed;
     var minutesLeft = Math.floor(timeLeft / 60)
     var secondsLeft = timeLeft % 60
-    timeEl.textContent = minutesLeft + ":" + secondsLeft + " Time remaining" 
+    timeEl.innerHTML = minutesLeft + ":" + secondsLeft + " Time remaining" 
+    
+    // localStorage.setItem("timeElapsed", timeElapsed)
+    // localStorage.setItem("timerCount", timeLeft)
     
 
     if (secondsLeft < 10){
@@ -67,7 +71,11 @@ function setTime() {
     }
 
     if(timeLeft === 0) {
-        clearInterval(timerInterval);}
+        clearInterval(timerInterval);
+        $('.answers').attr('style', "display: none;")
+        $('#question').text("Your score is " + score)
+        localStorage.setItem("score", score)
+    }
     
     }
     
@@ -97,10 +105,15 @@ function displayOptions(){
 function submitAnswer(event){
     event.preventDefault()
     questionCount ++;
+    if(questionCount < questions.length){
     displayQuestion()
     displayOptions()
     radioValue()
-
+    } else if (questionCount = questions.length){
+        $('.answers').attr('style', "display: none;")
+        $('#question').text("Your score is " + score)
+        localStorage.setItem("score", score)
+    }
 }
 
 function radioValue(){
@@ -114,16 +127,40 @@ function radioValue(){
     }
     if ( radioSelected === options[questionCount-1].answer ){
         score ++;
-        
-    } else {
-        begin - 5;
-        
     }
+        else {
+           var currentTime = quizTime - begin
+           currentTime -5
+           console.log(currentTime)
+           console.log(currentTime - 5)
+        }
+    //   else {
+    //     var penalty = localStorage.getItem("timerCount");
+    //     var counter = localStorage.getItem("timeElapsed")
+    //     var quizTime = penalty - 5
+    //     var timerInterval = setInterval(function(){
+    //     var newTimeElapsed = counter++    
+    //     var timeLeft = quizTime - newTimeElapsed;
+    //     var minutesLeft = Math.floor(timeLeft / 60)
+    //     var secondsLeft = timeLeft % 60
+    //     timeEl.textContent = minutesLeft + ":" + secondsLeft + " Time remaining" 
+    //     localStorage.setItem("timerCount", timeLeft)
+    //     localStorage.setItem("elapsedTime", newTimeElapsed)
+
+    //     if (secondsLeft < 10){
+    //         timeEl.textContent = minutesLeft + ":0" + secondsLeft + " time remaining." 
+    //     }
+    
+    //     if(timeLeft === 0) {
+    //         clearInterval(timerInterval);}
+
+        
+    // }, 1000)}
     console.log(radioSelected)
     console.log(options[questionCount-1].answer)
     console.log(score)
 }
-
+console.log(score)
 
 
 
