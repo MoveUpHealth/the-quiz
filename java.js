@@ -1,5 +1,23 @@
 var timeEl = document.querySelector(".timer");
 var getQuestion = $("#question")
+var submitBtn = $('.submit')
+var quizTime = 300;
+var begin = 0
+var questionCount = 0
+var score = 0
+var wrong = 0
+var scoreBoard = [{
+    userName: "User",
+    userScore: "3"
+    },
+    {
+    userName: "User",
+    userScore: "2"
+    },
+    {
+    userName: "User",
+    userScore: "1"
+    }]
 var questions = [
     "What is the first color in the rainbow?",
     "How do you style font color in CSS?",
@@ -35,33 +53,12 @@ var options = [{
         answer: 'option4'
     }]
 
-
-
-var submitBtn = $('.submit')
-var quizTime = 300;
-var begin = 0
-var score = 0
-var questionCount = 0
-var wrong = 0
-
-
-
-
-function startQuiz() {
-    $('.startDiv').empty()
-    $('.container').attr('style', "display: block;")
-    displayQuestion()
-    displayOptions()
-    setTime()    
-}
-
 function setTime() {
     var timerInterval = setInterval(function(){
         begin ++
     if(wrong > 0){
     var timeElapsed = begin + wrong*5
     var timeLeft =  quizTime - timeElapsed;
-
     } else if (wrong === 0){
     var timeElapsed = begin
     var timeLeft = quizTime - timeElapsed;
@@ -69,29 +66,27 @@ function setTime() {
     
     var minutesLeft = Math.floor(timeLeft / 60)
     var secondsLeft = timeLeft % 60
-    timeEl.innerHTML = minutesLeft + ":" + secondsLeft + " Time remaining" 
-        
+    timeEl.innerHTML = minutesLeft + ":" + secondsLeft + " Time remaining"   
 
     if (secondsLeft < 10){
         timeEl.textContent = minutesLeft + ":0" + secondsLeft + " time remaining." 
     }
 
-    if(timeLeft === 0) {
+    if(timeLeft === 0 || questionCount === questions.length) {
         clearInterval(timerInterval);
         $('.answers').attr('style', "display: none;")
         $('#question').text("Your score is " + score)
+        highScore()
         localStorage.setItem("score", score)
     }
-    
     }
-    
-    , 1000);
-    
-    
-    
+    , 1000);    
 }
 
-
+function displayQuestion(){
+    getQuestion.text(questions[questionCount])
+    console.log(questions[questionCount])
+}
 
 function displayOptions(){
     var select1 = $('.opt1')
@@ -106,7 +101,13 @@ function displayOptions(){
     console.log(options[questionCount].content1)
 }
 
-
+function startQuiz() {
+    $('.startDiv').empty()
+    $('.container').attr('style', "display: block;")
+    displayQuestion()
+    displayOptions()
+    setTime()    
+}
 
 function submitAnswer(event){
     event.preventDefault()
@@ -124,22 +125,50 @@ function submitAnswer(event){
 
 function radioValue(){
     var radio = $('.form-check-input')
-    for ( i = 0; i < radio.length; i++){
+    for (var i = 0; i < radio.length; i++){
         if(radio[i].checked){
-
             var radioSelected =  radio[i].value
-            }
-           
+            } 
     }
     if ( radioSelected === options[questionCount-1].answer ){
         score ++;
     }
         else {
-            wrong ++
-        
-        }
+            wrong ++;
+    }
    
 }
+
+function highScore(){
+    var scoreBoardTitle = document.createElement('h2') 
+    scoreBoardTitle.innerHTML = "High Scores"
+    document.getElementById('question').appendChild(scoreBoardTitle)
+    localStorage.getItem("scoreBoard")
+    for(var i = 0; i < scoreBoard.length; i++){
+       
+    var newP = document.createElement('p')
+    newP.innerHTML = scoreBoard[i].userName + ': ' + scoreBoard[i].userScore;
+    newP.setAttribute("id", "listItem[i]")
+    newP.setAttribute("style", "font-size: 16px;")
+    document.getElementById('question').appendChild(newP)
+    }
+
+
+    if(score > scoreBoard[2].userScore){
+            var inputUser = document.createElement("input")
+            var inputSubmit = document.createElement('button')
+            inputUser.setAttribute('id', 'userInitials')
+            inputSubmit.setAttribute('class', "btn btn-primary submitInitials")
+            document.getElementsById('question').appendChild(inputUser)
+            document.getElementsById('question').appendChild(inputSubmit)
+            scoreBoard[2].pop()
+            scoreBoard.push()
+            console.log(scoreBoard)
+
+        }
+    }
+
+
 
 
 
@@ -148,7 +177,3 @@ $('.startBtn').on('click', startQuiz);
 submitBtn.on('click', submitAnswer);
 
 
-function displayQuestion(){
-    getQuestion.text(questions[questionCount])
-    console.log(questions[questionCount])
-}
