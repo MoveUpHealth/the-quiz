@@ -6,18 +6,6 @@ var begin = 0
 var questionCount = 0
 var score = 0
 var wrong = 0
-var scoreBoard = [{
-    userName: "User",
-    userScore: "3"
-    },
-    {
-    userName: "User",
-    userScore: "2"
-    },
-    {
-    userName: "User",
-    userScore: "1"
-    }]
 var questions = [
     "What is the first color in the rainbow?",
     "How do you style font color in CSS?",
@@ -106,7 +94,13 @@ function startQuiz() {
     $('.container').attr('style', "display: block;")
     displayQuestion()
     displayOptions()
-    setTime()    
+    setTime()
+    if(localStorage.scoreBoard !== null){
+      var scoreBoard =  localStorage.getItem("scoreBoard")
+      return scoreBoard
+      console.log(scoreBoard)
+    }   
+    console.log(scoreBoard) 
 }
 
 function submitAnswer(event){
@@ -140,6 +134,26 @@ function radioValue(){
 }
 
 function highScore(){
+    var scoreBoard = JSON.parse(localStorage.getItem("scoreBoard"))
+    console.log("---" + scoreBoard)
+    if(scoreBoard === null){
+            scoreBoard = [{
+            userName: "User",
+            userScore: "3"
+            },
+            {
+            userName: "User",
+            userScore: "2"
+            },
+            {
+            userName: "User",
+            userScore: "1"
+            }]
+    
+        
+        console.log("1 " + scoreBoard)}
+        
+      
     var scoreBoardTitle = document.createElement('h2') 
     scoreBoardTitle.innerHTML = "High Scores"
     document.getElementById('question').appendChild(scoreBoardTitle)
@@ -154,16 +168,62 @@ function highScore(){
     }
 
 
-    if(score > scoreBoard[2].userScore){
+    if(score >= scoreBoard[2].userScore){
             var inputUser = document.createElement("input")
             var inputSubmit = document.createElement('button')
-            inputUser.setAttribute('id', 'userInitials')
+            inputUser.setAttribute('placeholder', 'Type your initials')
+            inputUser.setAttribute("style", "font-size: 16px;")
             inputSubmit.setAttribute('class', "btn btn-primary submitInitials")
-            document.getElementsById('question').appendChild(inputUser)
-            document.getElementsById('question').appendChild(inputSubmit)
-            scoreBoard[2].pop()
-            scoreBoard.push()
-            console.log(scoreBoard)
+            inputSubmit.setAttribute("style", "font-size: 16px;")
+            inputSubmit.innerHTML = "Submit"
+            document.getElementById('question').appendChild(inputUser)
+            document.getElementById('question').appendChild(inputSubmit)
+            
+            inputSubmit.addEventListener("click", function(event){
+                event.preventDefault();
+                var userHighScore = {
+                    userName: inputUser.value.trim(),
+                    userScore: score,
+                }
+                var submitted = document.createElement("h3")
+                submitted.innerHTML = "Congratulations! You made it on the scoreboard!"
+                document.getElementById('question').removeChild(inputUser)
+                document.getElementById('question').removeChild(inputSubmit)
+                document.getElementById('question').appendChild(submitted)
+                scoreBoard.pop()
+                scoreBoard.push(userHighScore)
+                function compareScore(a , b){
+                    var scoreA = a.userScore
+                    var scoreB = b.userScore
+
+                    let comparison = 1
+                    if (scoreA > scoreB){
+                        comparison = -1;
+                    } else if (scoreA < scoreB){
+                        comparison = 1;
+                    }
+                    return comparison;
+                }
+                function compareName(a , b){
+                    var nameA = a.userName
+                    var nameB = b.userName
+
+                    let comparison = 0
+                    if (nameA > nameB){
+                        comparison = 1;
+                    } else if (nameA < nameB){
+                        comparison = -1;
+                    }
+                    return comparison;
+                }
+                scoreBoard.sort(compareScore)
+                scoreBoard.sort(compareName)
+                scoreBoard.sort(compareScore)
+                localStorage.setItem("scoreBoard", JSON.stringify(scoreBoard))
+                console.log("local storage scoreboard: " + JSON.stringify(scoreBoard))
+            })
+            
+            console.log("local storage scoreboard: " + JSON.stringify(scoreBoard))
 
         }
     }
